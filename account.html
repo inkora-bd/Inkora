@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login — Inkora Collective</title>
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+  <div id="site-nav"></div>
+  <div class="wrap">
+    <div class="kicker">Account</div>
+    <h1>Login — if you want.</h1>
+    <p class="lead">না করলেও অর্ডার করা যাবে। লগইন করলে WhatsApp মেসেজে নাম-ফোন বসে যাবে। পাসওয়ার্ড নাই — এই ফোনের ব্রাউজারেই সেভ থাকে।</p>
+
+    <div class="card-form">
+      <label>Name</label>
+      <input id="name" type="text" placeholder="Your name" />
+      <label>Phone</label>
+      <input id="phone" type="tel" placeholder="01XXXXXXXXX" />
+      <div class="row-btns">
+        <button class="btn-dark" type="button" id="save">Save &amp; stay logged in</button>
+        <button class="btn-line" type="button" id="out">Log out</button>
+      </div>
+      <p class="note" id="msg">Or skip this page and order as guest.</p>
+      <p style="margin-top:14px"><a href="shop.html">Shop without login →</a></p>
+    </div>
+  </div>
+  <footer class="site-foot"><a href="index.html">Home</a></footer>
+  <script src="site.js"></script>
+  <script>
+    Inkora.nav("home");
+    var u = Inkora.user();
+    if (u) {
+      document.getElementById("name").value = u.name || "";
+      document.getElementById("phone").value = u.phone || "";
+      document.getElementById("msg").textContent = "You are logged in on this phone.";
+    }
+    document.getElementById("save").onclick = function(){
+      var name = document.getElementById("name").value.trim();
+      var phone = document.getElementById("phone").value.trim();
+      if (!name) { document.getElementById("msg").textContent = "Name tao likho."; return; }
+      Inkora.saveUser({ name:name, phone:phone });
+      Inkora.nav("home");
+      document.getElementById("msg").textContent = "Saved. Guest-ও পারবে — তুই এখন লগইন।";
+    };
+    document.getElementById("out").onclick = function(){
+      Inkora.logout();
+      Inkora.nav("home");
+      document.getElementById("msg").textContent = "Logged out. Order still works.";
+    };
+  </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f"}' crossorigin="anonymous"></script>
+</body>
+</html>

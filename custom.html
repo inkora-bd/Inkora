@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Custom Orders — Inkora Collective</title>
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+  <div id="site-nav"></div>
+  <div class="wrap">
+    <div class="kicker">Custom Orders</div>
+    <p class="lead">Send any photo — a flower, a character, a bag you saw. We reply on WhatsApp with time and price. Login লাগবে না।</p>
+
+    <div class="card-form">
+      <label>Your photo</label>
+      <input type="file" id="pic" accept="image/*" />
+      <img id="prev" class="preview" alt="preview" />
+      <label>What do you want?</label>
+      <textarea id="note" rows="3" placeholder="e.g. sunflower bouquet, baby booties, tote like this photo"></textarea>
+      <div class="row-btns">
+        <a class="btn-dark" id="send" target="_blank" rel="noopener">WhatsApp-এ পাঠাও</a>
+      </div>
+      <p class="note">WhatsApp ছবি নিজে অ্যাটাচ করতে হয়। চ্যাট খুললে ছবিটা গ্যালারি থেকে পাঠিয়ে দাও।</p>
+    </div>
+  </div>
+  <footer class="site-foot"><a href="index.html">Home</a></footer>
+  <script src="site.js"></script>
+  <script>
+    Inkora.nav("custom");
+    var pic = document.getElementById("pic");
+    var prev = document.getElementById("prev");
+    pic.addEventListener("change", function(){
+      var f = pic.files && pic.files[0];
+      if (!f) return;
+      prev.src = URL.createObjectURL(f);
+      prev.style.display = "block";
+    });
+    function sync(){
+      var note = document.getElementById("note").value.trim() || "custom crochet from my photo";
+      document.getElementById("send").href = Inkora.waLink("Hi Inkora, custom order.\n" + note + "\n(photo coming in this chat)");
+    }
+    document.getElementById("note").addEventListener("input", sync);
+    sync();
+  </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f"}' crossorigin="anonymous"></script>
+</body>
+</html>

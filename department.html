@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Department — Inkora Collective</title>
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+  <div id="site-nav"></div>
+  <div class="wrap">
+    <div class="kicker" id="k">Department</div>
+    <h1 id="t">Opening soon</h1>
+    <p class="lead" id="d"></p>
+    <ul class="soon-list" id="list"></ul>
+    <p class="note">এই লাইনে এখন স্টক নাই। চাইলে WhatsApp-এ বলো — বানানো যাবে কি না বলে দেব।</p>
+    <p style="margin-top:18px"><a class="btn-dark" id="wa" target="_blank" rel="noopener">Ask on WhatsApp</a></p>
+  </div>
+  <footer class="site-foot"><a href="shop.html">← Shop All</a></footer>
+  <script src="site.js"></script>
+  <script>
+    Inkora.nav("shop");
+    var data = {
+      bags: { k:"Bags & Accessories", t:"Totes to keychains", items:["Tote bags","Mini bags","Coin purses","Pouches","Phone slings","Keychains"] },
+      wear: { k:"Wearables", t:"For the body", items:["Tops","Cardigans","Bucket hats","Beanies","Scrunchies","Headbands"] },
+      plush: { k:"Plushies & Toys", t:"Amigurumi", items:["Amigurumi dolls","Mini plushie keychains"] },
+      decor: { k:"Flowers & Decor", t:"Blooms that never fade", items:["Everlasting flower bouquets","Wall hangings","Cushion covers","Plant hangers"] },
+      baby: { k:"Baby Items", t:"Gentle for little ones", items:["Booties","Hats","Mittens","Blankets"] }
+    };
+    var id = new URLSearchParams(location.search).get("id") || "bags";
+    var c = data[id] || data.bags;
+    document.title = c.k + " — Inkora Collective";
+    document.getElementById("k").textContent = c.k;
+    document.getElementById("t").textContent = c.t;
+    document.getElementById("d").textContent = "This shelf is being built. The pieces we will put here:";
+    document.getElementById("list").innerHTML = c.items.map(function(i){ return "<li>"+i+"</li>"; }).join("");
+    document.getElementById("wa").href = Inkora.waLink("Hi Inkora, I am asking about: " + c.k);
+  </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f"}' crossorigin="anonymous"></script>
+</body>
+</html>
