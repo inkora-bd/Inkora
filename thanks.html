@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Order received — Inkora Collective</title>
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+  <div id="site-nav"></div>
+  <div class="wrap">
+    <div class="kicker">Thank you</div>
+    <h1>Order received.</h1>
+    <div id="box" class="card-form" style="max-width:520px"></div>
+  </div>
+  <script src="site.js"></script>
+  <script>
+    Inkora.nav("shop");
+    var o = null;
+    try { o = JSON.parse(localStorage.getItem("inkora_last_order") || "null"); } catch(e) {}
+    var box = document.getElementById("box");
+    if (!o) { box.innerHTML = "<p>No order on this phone.</p>"; }
+    else {
+      var payName = { cod:"Cash on delivery", bkash:"bKash", nagad:"Nagad" }[o.pay] || o.pay;
+      box.innerHTML =
+        "<p><b>Order "+o.id+"</b></p>" +
+        "<p class='note'>"+o.name+" · "+o.phone+"</p>" +
+        "<p class='note'>"+o.address+"</p>" +
+        o.items.map(function(i){ return "<p>"+i.qty+" × "+i.name+" — "+Inkora.money(i.line)+"</p>"; }).join("") +
+        "<p>Delivery ৳140</p><p><b>Total "+Inkora.money(o.total)+"</b> · "+payName+(o.trx? " · Trx "+o.trx:"")+"</p>" +
+        "<p class='note'>We will call or message this number to confirm. WhatsApp লাগবে না — চাইলে নিজে পাঠাতে পারো।</p>" +
+        '<p style="margin-top:16px"><a class="btn-dark" href="index.html">Back to shop</a></p>';
+    }
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2a6365018bfbf33',t:'MTc4NjYwODI5OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

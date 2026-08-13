@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checkout — Inkora Collective</title>
+  <link rel="stylesheet" href="site.css" />
+  <style>
+    .paybox { border:1px solid #e0d4c0; border-radius:12px; padding:12px 14px; margin:8px 0; background:#fff; }
+    .paybox label { margin:0; display:flex; gap:10px; align-items:center; text-transform:none; letter-spacing:0; font:16px Georgia,serif; color:#2b241c; }
+    .pay-extra { display:none; margin-top:10px; font-size:14px; color:#5a4a38; }
+    .paybox.on .pay-extra { display:block; }
+    .grid2 { display:grid; grid-template-columns:1.2fr .8fr; gap:28px; }
+    @media (max-width:800px){ .grid2 { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div id="site-nav"></div>
+  <div class="wrap">
+    <div class="crumb"><a href="cart.html">Bag</a> / Checkout</div>
+    <div class="kicker">Checkout</div>
+    <h1>Payment</h1>
+    <p class="lead">Login লাগবে না। ডেলিভারি সারাদেশ ৳140।</p>
+    <div class="grid2" id="box"></div>
+  </div>
+  <footer class="site-foot"><div class="copy">© Inkora Collective</div></footer>
+  <script src="products.js"></script>
+  <script src="site.js"></script>
+  <script>
+    Inkora.nav("shop");
+    var lines = Inkora.cartLines();
+    if (!lines.length) { location.href = "cart.html"; }
+    var sub = Inkora.subtotal();
+    var total = sub + Inkora.SHIP;
+    var u = Inkora.user() || {};
+    var num = Inkora.PAY_NUMBER;
+
+    document.getElementById("box").innerHTML =
+      '<form class="card-form" id="f" style="max-width:none">' +
+        '<label>Full name</label><input id="name" required value="'+(u.name||"")+'">' +
+        '<label>Phone</label><input id="phone" required placeholder="01XXXXXXXXX" value="'+(u.phone||"")+'">' +
+        '<label>Address</label><textarea id="addr" rows="3" required placeholder="House, road, area, district"></textarea>' +
+        '<label>Payment</label>' +
+        '<div class="paybox on"><label><input type="radio" name="pay" value="cod" checked> Cash on delivery</label></div>' +
+        '<div class="paybox"><label><input type="radio" name="pay" value="bkash"> bKash</label>' +
+          '<div class="pay-extra">Send <b>'+Inkora.money(total)+'</b> to <b>'+num+'</b> (Personal).<br>Then put the TrxID below.' +
+          '<input id="trx" placeholder="TrxID" style="margin-top:8px"></div></div>' +
+        '<div class="paybox"><label><input type="radio" name="pay" value="nagad"> Nagad</label>' +
+          '<div class="pay-extra">Send <b>'+Inkora.money(total)+'</b> to <b>'+num+'</b>. Then put the TrxID.' +
+          '<input id="trx2" placeholder="TrxID" style="margin-top:8px"></div></div>' +
+        '<button class="btn-dark" type="submit" style="width:100%;margin-top:16px">Place order · '+Inkora.money(total)+'</button>' +
+        '<p class="note">Card (Visa/Mastercard) লাগলে পরে Shopify/SSLCOMMERZ লাগবে — এখন BD-তে কাজ করে COD, bKash, Nagad।</p>' +
+      '</form>' +
+      '<div class="cart-sum" style="margin:0">' +
+        lines.map(function(l){ return '<p><span>'+l.qty+' × '+l.product.name+'</span><span>'+Inkora.money(l.line)+'</span></p>'; }).join("") +
+        '<p><span>Delivery</span><span>৳140</span></p>' +
+        '<p><span>Total</span><b>'+Inkora.money(total)+'</b></p>' +
+      '</div>';
+
+    document.querySelectorAll('input[name=pay]').forEach(function(r){
+      r.onchange = function(){
+        document.querySelectorAll('.paybox').forEach(function(b){ b.classList.remove('on'); });
+        r.closest('.paybox').classList.add('on');
+      };
+    });
+
+    document.getElementById("f").onsubmit = function(e){
+      e.preventDefault();
+      var pay = document.querySelector('input[name=pay]:checked').value;
+      var trx = pay === "bkash" ? document.getElementById("trx").value.trim()
+              : pay === "nagad" ? document.getElementById("trx2").value.trim() : "";
+      if ((pay === "bkash" || pay === "nagad") && !trx) {
+        alert("TrxID tao likho.");
+        return;
+      }
+      var order = {
+        id: "INK" + Date.now().toString().slice(-8),
+        name: document.getElementById("name").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        address: document.getElementById("addr").value.trim(),
+        pay: pay,
+        trx: trx,
+        items: lines.map(function(l){ return { slug:l.product.slug, name:l.product.name, qty:l.qty, line:l.line }; }),
+        sub: sub,
+        ship: Inkora.SHIP,
+        total: total,
+        at: new Date().toISOString()
+      };
+      var all = [];
+      try { all = JSON.parse(localStorage.getItem("inkora_orders") || "[]"); } catch(err) {}
+      all.push(order);
+      localStorage.setItem("inkora_orders", JSON.stringify(all));
+      localStorage.setItem("inkora_last_order", JSON.stringify(order));
+      localStorage.setItem("inkora_cart", "[]");
+      location.href = "thanks.html";
+    };
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2a636c3e9c6bf33',t:'MTc4NjYwODMxOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

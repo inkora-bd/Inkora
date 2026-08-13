@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Product — Inkora Collective</title>
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+  <div id="site-nav"></div>
+  <div class="wrap" id="root"></div>
+  <footer class="site-foot" id="foot"></footer>
+  <script src="products.js"></script>
+  <script src="site.js"></script>
+  <script>
+    Inkora.nav("shop");
+    document.getElementById("foot").innerHTML =
+      '<div><h4>Shop</h4><a href="shop.html">Shop All</a><a href="coasters.html">Coasters</a><a href="custom.html">Custom</a></div>' +
+      '<div><h4>Help</h4><a href="terms.html">Terms</a><a href="account.html">Account</a><a href="cart.html">Bag</a></div>' +
+      '<div><h4>Order</h4><p>Bag first. WhatsApp only at checkout.</p><p>01832461573</p></div>' +
+      '<div class="copy">© Inkora Collective</div>';
+
+    var slug = new URLSearchParams(location.search).get("id");
+    var p = Inkora.findProduct(slug) || (INKORA_PRODUCTS[0]);
+    document.title = p.name + " — Inkora Collective";
+    var others = INKORA_PRODUCTS.filter(function(x){ return x.slug !== p.slug; }).slice(0,4);
+    var specRows = p.specs.map(function(s){ return "<tr><td>"+s[0]+"</td><td>"+s[1]+"</td></tr>"; }).join("");
+
+    document.getElementById("root").innerHTML =
+      '<div class="crumb"><a href="index.html">Home</a> / <a href="coasters.html">Coasters &amp; Table</a> / '+p.name+'</div>' +
+      '<div class="pgrid">' +
+        '<div class="pgal"><img src="'+p.img+'" alt="'+p.name+'"></div>' +
+        '<div>' +
+          '<div class="kicker">'+p.sku+' · Flora Doily</div>' +
+          '<h1>'+p.name+'</h1>' +
+          '<p class="lead">'+p.palette+'</p>' +
+          '<div class="price-lg">'+Inkora.money(p.price)+'</div>' +
+          '<p>'+p.short+'</p>' +
+          '<div class="actions">' +
+            '<div class="qty"><button type="button" id="minus">−</button><span id="q">1</span><button type="button" id="plus">+</button></div>' +
+            '<button class="btn-dark" type="button" id="add">Add to bag</button>' +
+          '</div>' +
+          '<p class="note">Does not open WhatsApp. Review in your bag, then checkout.</p>' +
+          '<div class="tabs">' +
+            '<button class="on" data-t="d">Description</button>' +
+            '<button data-t="s">Details</button>' +
+            '<button data-t="c">Care</button>' +
+            '<button data-t="h">Shipping &amp; return</button>' +
+          '</div>' +
+          '<div class="tabp on" id="d"><p>'+p.story+'</p></div>' +
+          '<div class="tabp" id="s"><table>'+specRows+'</table></div>' +
+          '<div class="tabp" id="c"><p>'+p.care+'</p></div>' +
+          '<div class="tabp" id="h"><p>Delivery ৳140 anywhere in Bangladesh. Made to order — usually 3–5 days before dispatch.<br><br>Handmade and often made after you order, so we do not take returns for change of mind. Wrong item or a fault: message within 48 hours of delivery.</p></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="section"><h2>You may also like</h2><div class="plist" id="also"></div></div>';
+
+    document.getElementById("also").innerHTML = others.map(function(o){
+      return '<a class="pcard" href="product.html?id='+o.slug+'"><img src="'+o.img+'" alt=""><h3>'+o.name+'</h3><div class="sm">'+o.palette+'</div><div class="pr">'+Inkora.money(o.price)+'</div></a>';
+    }).join("");
+
+    var q = 1;
+    function drawQ(){ document.getElementById("q").textContent = q; }
+    document.getElementById("minus").onclick = function(){ if(q>1){ q--; drawQ(); } };
+    document.getElementById("plus").onclick = function(){ q++; drawQ(); };
+    document.getElementById("add").onclick = function(){
+      Inkora.addToCart(p.slug, q);
+      Inkora.nav("shop");
+      Inkora.toast("Added to bag — "+p.name);
+    };
+    document.querySelectorAll(".tabs button").forEach(function(b){
+      b.onclick = function(){
+        document.querySelectorAll(".tabs button").forEach(function(x){ x.classList.remove("on"); });
+        document.querySelectorAll(".tabp").forEach(function(x){ x.classList.remove("on"); });
+        b.classList.add("on");
+        document.getElementById(b.getAttribute("data-t")).classList.add("on");
+      };
+    });
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2a638311e0bbf33',t:'MTc4NjYwODM3Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
